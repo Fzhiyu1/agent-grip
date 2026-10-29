@@ -1,0 +1,12 @@
+__pycache__/
+*.pyc
+.pytest_cache/
+*.egg-info/
+build/
+dist/
+.venv/
+# real reports contain your own usage statistics: never commit them
+agent-grip-report*.html
+agent-grip-report*.json
+reports/
+!examples/sample-report.html

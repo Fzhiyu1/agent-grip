@@ -53,6 +53,16 @@ def _since(v: Optional[str], tz) -> Optional[float]:
         raise SystemExit(f"cannot understand --since {v!r}; use 30d or 2026-09-01")
 
 
+def _positive_int(value: str) -> int:
+    try:
+        n = int(value)
+    except ValueError:
+        raise argparse.ArgumentTypeError(f"invalid int value: {value!r}") from None
+    if n < 1:
+        raise argparse.ArgumentTypeError(f"must be >= 1, got {n}")
+    return n
+
+
 def build_parser() -> argparse.ArgumentParser:
     p = argparse.ArgumentParser(
         prog="agent-grip",
@@ -65,7 +75,7 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--since", help="only count messages since this date (2026-09-01) or relative (30d)")
     p.add_argument("--tz", default="local", help="time zone for days and hours: IANA name or +8 offset (default: local)")
     p.add_argument("--lang", choices=["en", "zh"], default=None, help="report language (default: from the system locale)")
-    p.add_argument("--window", type=int, default=30, metavar="MIN", help="concurrency window in minutes (default: %(default)s)")
+    p.add_argument("--window", type=_positive_int, default=30, metavar="MIN", help="concurrency window in minutes (default: %(default)s)")
     p.add_argument("--idle-gap", type=int, default=10, metavar="MIN", help="a session counts as in flight until this many idle minutes pass (default: %(default)s)")
     p.add_argument("--day-start", type=int, default=5, metavar="HOUR", help="hour at which a new day starts, so late nights count as the previous day (default: %(default)s)")
     p.add_argument("--include-temp", action="store_true", help="include sessions whose working directory is a temp dir (excluded by default)")

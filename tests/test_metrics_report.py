@@ -16,6 +16,24 @@ def test_sliding_window_counts_touched_and_back_and_forth():
     assert b == [1, 0, 0, 0]  # only session "a" has two messages inside [0,10)
 
 
+def test_sliding_rejects_non_positive_width():
+    import pytest
+
+    for w in (0, -5):
+        with pytest.raises(ValueError):
+            sliding([1.0, 2.0, 3.0], ["a", "a", "b"], w)
+
+
+def test_cli_rejects_non_positive_window(capsys):
+    import pytest
+
+    for w in ("0", "-3"):
+        with pytest.raises(SystemExit) as e:
+            main(["--window", w])
+        assert e.value.code == 2
+        assert "must be >= 1" in capsys.readouterr().err
+
+
 def test_sliding_window_matches_brute_force():
     import random
 

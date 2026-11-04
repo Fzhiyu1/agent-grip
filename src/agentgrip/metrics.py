@@ -44,6 +44,8 @@ def _ev(measures: str, method: str, n: Any, limits: str) -> Dict[str, Any]:
 
 def sliding(ts: Sequence[float], sids: Sequence[str], width: float) -> Tuple[List[int], List[int]]:
     """For each message i, look at [ts[i], ts[i]+width): (distinct sessions touched, sessions with >=2 messages)."""
+    if width <= 0:
+        raise ValueError(f"window width must be positive, got {width}")
     n = len(ts)
     cnt: Dict[str, int] = {}
     touched = two = 0
